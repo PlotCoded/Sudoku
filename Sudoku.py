@@ -1,3 +1,4 @@
+# This script is the animation sudoku solver: Very slow btw
 import customtkinter as ctk, random, math
 
 width,height = 600,600
@@ -31,16 +32,16 @@ coords_text = {}
 for x,y in coords:
 	coords_text[(x,y)] = [(x*widthx+(widthx/2),y*widthy+(widthy/2)),0,"black"]
 
-#----- Filling in the already filled cells
-string_grid = """200170603
-050000100
-000006079
-000040700
-000801000
-009050000
-310400000
-005000060
-906037002"""
+#----- Filling in the already filled cells: This is your input grid
+string_grid = """000000080
+800701040
+040020030
+374000900
+000030000
+005000321
+010060050
+050802006
+080000000"""
 
 string_grid = string_grid.split("\n")
 filled = {} # Cells that are filled before the entire process starts running
@@ -153,7 +154,7 @@ def incomplete():
 				for c in range(9):
 					completed_version[(r,c)] = int(canvas.itemcget(coords_text[(r,c)][0],"text"))
 
-			print(int(canvas.itemcget(coords_text[(0,0)][0],"text")), int(canvas.itemcget(coords_text[(1,0)][0],"text")), int(canvas.itemcget(coords_text[(2,0)][0],"text")))
+			print(int(canvas.itemcget(coords_text[(0,0)][0],"text")), int(canvas.itemcget(coords_text[(1,0)][0],"text")), int(canvas.itemcget(coords_text[(2,0)][0],"text"))) #  # Can you guess why I need the first 3 cells?Can you guess why I need the first 3 cells?
 
 # This is my beast, the main Guy in all of this, G-King, the one, it is him
 def dfs(node, stack):
@@ -214,3 +215,4 @@ for node,val in completed_version.items():
 	canvas.itemconfig(coords_text[node][0], fill="green")
 
 window.mainloop()
+sys.exit()

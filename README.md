@@ -4,7 +4,16 @@
 
 <h1>Sudoku</h1>
 
-<p>For from perfect, like so far. People are invited to add onto it though. Use the 9 line text in the script to enter your input grid for the sudoku</p>
+<img width="741" height="777" alt="image" src="https://github.com/user-attachments/assets/d6c912b5-7352-4b1c-a6a8-1f98fb1d13a7" />
+
+<p>Uses recursion and backtracking to solve the sudoku. Use the string grid in each script to input your sudoku.</p>
+
+<p>Note: 
+<ul>
+<li>Sudoku: This script runs an animated sudoku. This is much slower than Sudoku2 script.</li>
+<li>Sudoku2: This script runs a non animated sudoku. This is much faster than the Sudoku script.</li>
+</ul>
+</p>
 
 # Copyright (c) 2024 Sam
 # Licensed under the MIT License. See LICENSE file in the project root for full license information.
