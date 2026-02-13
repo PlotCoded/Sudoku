@@ -29,32 +29,26 @@ coords_text = {}
 
 #Attributes for each cell
 for x,y in coords:
-	# text_id = canvas.create_text(
-    #         (x*widthx+(widthx/2),y*widthy+(widthy/2)),
-    #         text=random.randint(0,9),
-    #         font=("Calibri",40),
-    #         fill="black"
-    #     )
-	coords_text[(x,y)] = [(x*widthx+(widthx/2),y*widthy+(widthy/2)),random.randint(0,9),"black"]
+	coords_text[(x,y)] = [(x*widthx+(widthx/2),y*widthy+(widthy/2)),0,"black"]
 
 #----- Filling in the already filled cells
-string_grid = """030050040
-008010500
-460000012
-070502080
-000603000
-040109030
-250000098
-001020600
-080060020"""
+string_grid = """200170603
+050000100
+000006079
+000040700
+000801000
+009050000
+310400000
+005000060
+906037002"""
 
 string_grid = string_grid.split("\n")
-filled = {}
+filled = {} # Cells that are filled before the entire process starts running
 
 # Filling the filled cells with their values
-def fill_coords(cell_vals):
-	for c,v in cell_vals.items():
-		coords_text[c][1] = v
+def fill_coords(_):
+	for c,v in _.items():
+		coords_text[c][1] = v # Updating the text in each cell
 
 # Same here
 for r in range(len(string_grid)):
@@ -83,7 +77,7 @@ def createText():
             fill=color
         )
 
-		coords_text[(x,y)] = [pos,text,color,text_id]
+		coords_text[(x,y)] = [text_id]
 		# canvas.create_text(pos,text=text,font=("Calibri",40),fill=color)
 
 createText()
@@ -93,22 +87,19 @@ def checkingValidity(cell):
 
 	for c in range(9): # Columns
 		if c == x: continue
-		if coords_text[(c,y)][1] == coords_text[(x,y)][1]:
-			# print(coords_text[(c,y)][1],coords_text[(x,y)][1],"column")
+		if canvas.itemcget(coords_text[(c,y)][0],"text") == canvas.itemcget(coords_text[(x,y)][0],"text"):
 			return False
 	
 	for r in range(9): # Rows
 		if r == y: continue
-		if coords_text[(x,r)][1] == coords_text[(x,y)][1]:
-			# print(coords_text[(x,r)][1],coords_text[(x,y)][1],"row")
+		if canvas.itemcget(coords_text[(x,r)][0],"text") == canvas.itemcget(coords_text[(x,y)][0],"text"):
 			return False
 
 	# Its grid
 	for r in range(3*g[0],(3*g[0])+3):
 		for c in range(3*g[1],(3*g[1])+3):
 			if (x,y) == (r,c): continue
-			if coords_text[(r,c)][1] == coords_text[(x,y)][1]:
-				# print(coords_text[(r,c)][1],coords_text[(x,y)][1],x,y,r,c,"both")
+			if canvas.itemcget(coords_text[(r,c)][0],"text") == canvas.itemcget(coords_text[(x,y)][0],"text"):
 				return False
 	return True
 
@@ -119,18 +110,18 @@ def gettingOptions(cell):
 	options = set(n for n in range(1,10))
 
 	for c in range(9): # Columns
-		if coords_text[(c,y)][1] > 0 and coords_text[(c,y)][1] in options:
-			options.remove(coords_text[(c,y)][1])
+		if int(canvas.itemcget(coords_text[(c,y)][0],"text")) > 0 and int(canvas.itemcget(coords_text[(c,y)][0],"text")) in options:
+			options.remove(int(canvas.itemcget(coords_text[(c,y)][0],"text")))
 	
 	for r in range(9): # Rows
-		if coords_text[(x,r)][1] >  0 and coords_text[(x,r)][1] in options:
-			options.remove(coords_text[(x,r)][1])
+		if int(canvas.itemcget(coords_text[(x,r)][0],"text")) >  0 and int(canvas.itemcget(coords_text[(x,r)][0],"text")) in options:
+			options.remove(int(canvas.itemcget(coords_text[(x,r)][0],"text")))
 
 	# Its grid
 	for r in range(3*g[0],3*g[0]+3):
 		for c in range(3*g[1],3*g[1]+3):
-			if coords_text[(r,c)][1] == 0 and coords_text[(r,c)][1] in options:
-				options.remove(coords_text[(r,c)][1])
+			if int(canvas.itemcget(coords_text[(r,c)][0],"text")) == 0 and int(canvas.itemcget(coords_text[(r,c)][0],"text")) in options:
+				options.remove(int(canvas.itemcget(coords_text[(r,c)][0],"text")))
 
 	return options
 
@@ -140,120 +131,86 @@ coords_options = {}
 for r in range(0,9):
 	for c in range(0,9):
 		if filled[(r,c)] == 0:
-			coords_options[(r,c)] = gettingOptions((r,c)) #print
+			coords_options[(r,c)] = gettingOptions((r,c))
 		else:
 			coords_options[(r,c)] = {}
 
+incompleted = [True]
+completed_version = {}
+
 def incomplete():
-	for r in range(9):
-		for c in range(9):
-			if coords_text[(r,c)][1] == 0:
-				return True
-	else:
-		return False
+	global completed_version
+	if incompleted[0] == True:
+		for r in range(9):
+			for c in range(9):
+				if int(canvas.itemcget(coords_text[(r,c)][0],"text")) == 0:
+					incompleted[0] = True
+					return False
+		else:
+			incompleted[0] = False
+			print("Done")
+			for r in range(9):
+				for c in range(9):
+					completed_version[(r,c)] = int(canvas.itemcget(coords_text[(r,c)][0],"text"))
+
+			print(int(canvas.itemcget(coords_text[(0,0)][0],"text")), int(canvas.itemcget(coords_text[(1,0)][0],"text")), int(canvas.itemcget(coords_text[(2,0)][0],"text")))
+
 # This is my beast, the main Guy in all of this, G-King, the one, it is him
 def dfs(node, stack):
-	for r in range(9):
-		if not coords_text[(r,8)][1] > 0:
-			break
-	else:
-		return [coords_text[(0,0)][1],coords_text[(1,0)][1], coords_text[(2,0)][1]]
+	incomplete()
 
-	child_nodes = coords_options[node]
+	if incompleted[0]:
+		child_nodes = gettingOptions(node)
 
-	for n in child_nodes:
-		coords_text[node][1] = n
+		for n in child_nodes:
+			window.update()
+			window.after(0) # Real time viewing
 
-		pos = coords_text[node][0]
-		text = coords_text[node][1]
-		color = "red"
+			canvas.itemconfig(coords_text[node][0], text=n)
+			canvas.itemconfig(coords_text[node][0], fill="red")
 
-		window.update()
-		window.after(0) # Real time viewing
+			# Recursion
+			def f(node): # Going to the next node if only this node is valid
+				global next_node
+				if checkingValidity(node):
+					next_node = node
 
-		canvas.itemconfig(coords_text[node][3], text=n)
-		canvas.itemconfig(coords_text[node][3], fill="red")
+					if node[0] <= 8 and node[1] <= 8:
+						next_node = (node[0]+1,node[1])
+						
+						if node[0] >=  8:
+							next_node = (0,node[1]+1)
 
-		# Recursion
-		def f(node): # Going to the next node if only this node is valid
-			global next_node
-			if checkingValidity(node):
-				next_node = node
+					if node == (8,8): return True
+				else:
+					return False
+				if filled[next_node] > 0:
+					return f(next_node)
+				return (next_node)
 
-				if node[0] <= 8 and node[1] <= 8:
-					next_node = (node[0]+1,node[1])
-					
-					if node[0] >=  8:
-						next_node = (0,node[1]+1)
-
-				if node == (8,8): return True
-				# print(coords_text[(0,0)][1],coords_text[(1,0)][1], coords_text[(2,0)][1])
-				# print(next_node,"hsohconsodc")
-			else:
-				return False
-			if filled[next_node] > 0:
-				return f(next_node)
-			return (next_node)
-
-		next_node = f(node)
-		if next_node:
-			try:
+			next_node = f(node)
+			if next_node:
 				dfs(next_node,stack)
-			except:
-				print("Done")
-				return False
-	else:
-		coords_text[node][1] = 0
 
-		pos = coords_text[node][0]
-		text = coords_text[node][1]
-		color = "black"
+			window.update()
+			window.after(0) # Real time viewing
 
-		window.update()
-		window.after(0) # Real time viewing
+			canvas.itemconfig(coords_text[node][0], text=0)
+			canvas.itemconfig(coords_text[node][0], fill="black")
 
-		canvas.itemconfig(coords_text[node][3], text=0)
-		canvas.itemconfig(coords_text[node][3], fill=color)
+def getStart():
+	for r in range(9):
+		for c in range(9):
+			if canvas.itemcget(coords_text[(c,r)][0],"text") == "0":
+				node = (c,r)
+				return node
 
-print(dfs((0,0),[]))
-# print(coords_options)
+start = getStart()
+print(start)
+(dfs(start,[]))
 
-# # Creating binding and functionality
-# # Getting the cell you are on when you click on a cell
-# def click(event):
-# 	canvas.focus_set()
-# 	x,y = event.x,event.y
-# 	x,y = math.floor(x/widthx),math.floor(y/widthy)
-
-# 	if (x,y) not in coords: return None
-# 	# Changing the text color to info the user it had been clicked
-# 	pos = coords_text[(x,y)][0]
-# 	text = coords_text[(x,y)][1]
-# 	color = "green"
-	
-# 	print("click")
-
-# 	canvas.create_text(pos,text=text,font=("Calibri",40),fill=color)
-
-# # Changing the color when you unclick it
-# def unclick(event):
-# 	x,y = event.x,event.y
-# 	x,y = math.floor(x/widthx),math.floor(y/widthy)
-
-# 	if (x,y) not in coords: return None
-
-# 	# Changing the text color to info the user it had been clicked
-# 	pos = coords_text[(x,y)][0]
-# 	text = coords_text[(x,y)][1]
-# 	if text > 0:
-# 		color = "blue"
-# 	else:
-# 		color = "black"
-
-# 	print("unclick")
-# 	canvas.create_text(pos,text=text,font=("Calibri",40),fill=color)
-
-# canvas.bind("<KeyPress-Left>",click)
-# canvas.bind("<ButtonRelease>",unclick)
+for node,val in completed_version.items():
+	canvas.itemconfig(coords_text[node][0], text=val)
+	canvas.itemconfig(coords_text[node][0], fill="green")
 
 window.mainloop()
