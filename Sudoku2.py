@@ -26,15 +26,15 @@ for x,y in coords:
 coords_text = {}
 
 #----- Filling in the already filled cells: This is your input grid
-string_grid = """300200000
-000107000
-706030500
-070009080
-900020004
-010800050
-009040301
-000702000
-000008006
+string_grid = """000000080
+800701040
+040020030
+374000900
+000030000
+005000321
+010060050
+050802006
+080000000
 """
 
 string_grid = string_grid.split("\n")
